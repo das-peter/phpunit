@@ -470,6 +470,28 @@ abstract class PHPUnit_Framework_Assert
           $actual, self::greaterThanOrEqual($expected), $message
         );
     }
+    
+    /**
+     * Asserts that the sent header contains a specific string
+     *
+     * @param  mixed  $string
+     * @param  boolean $ignoreCase
+     * @param  string $message
+     * @param  boolean $exactFit If activated the header has to match exactly.
+     * @since  Method available since Release 3.x
+     */
+    public static function assertHeaderContains($string, $message = '', $ignoreCase = FALSE, $exactFit = FALSE)
+    {
+        if (!(is_integer($string) || is_string($string))) {
+            throw PHPUnit_Util_InvalidArgumentHelper::factory(
+              1, 'integer or string'
+            );
+        }
+
+        $constraint = new PHPUnit_Framework_Constraint_HeaderContains($string, $ignoreCase, $exactFit);
+
+        self::assertThat(headers_list(), $constraint, $message);
+    }
 
     /**
      * Asserts that an attribute is greater than or equal to another value.

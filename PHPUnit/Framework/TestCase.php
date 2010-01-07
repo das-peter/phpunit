@@ -149,6 +149,13 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
      * @var    boolean
      */
     protected $runTestInSeparateProcess = NULL;
+    
+    /**
+     * Whether or not this test is to be run in a separate CGI PHP process.
+     *
+     * @var    boolean
+     */
+    protected $runTestInCgiProcess = NULL;
 
     /**
      * Whether or not this test should preserve the global state when running in a separate PHP process.
@@ -581,7 +588,7 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
             $job = $template->render();
             $result->startTest($this);
 
-            $jobResult = PHPUnit_Util_PHP::runJob($job);
+            $jobResult = PHPUnit_Util_PHP::runJob($job, $this->runTestInCgiProcess);
 
             if (!empty($jobResult['stderr'])) {
                 $time = 0;
@@ -931,6 +938,23 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
             throw PHPUnit_Util_InvalidArgumentHelper::factory(1, 'boolean');
         }
     }
+    
+    /**
+     * @param  boolean $runTestInSeparateProcess
+     * @throws InvalidArgumentException
+     * @since  Method available since Release 3.4.x
+     */
+    public function setRunTestInCgiProcess($runTestInCgiProcess)
+    {
+        if (is_bool($runTestInCgiProcess)) {
+            if ($this->runTestInCgiProcess === NULL) {
+                $this->runTestInCgiProcess = $runTestInCgiProcess;
+            }
+        } else {
+            throw PHPUnit_Util_InvalidArgumentHelper::factory(1, 'boolean');
+        }
+    }
+    
 
     /**
      * @param  boolean $preserveGlobalState

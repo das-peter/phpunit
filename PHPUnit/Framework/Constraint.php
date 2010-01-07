@@ -179,6 +179,7 @@ require_once 'PHPUnit/Framework/Constraint/ClassHasStaticAttribute.php';
 require_once 'PHPUnit/Framework/Constraint/IsFalse.php';
 require_once 'PHPUnit/Framework/Constraint/FileExists.php';
 require_once 'PHPUnit/Framework/Constraint/GreaterThan.php';
+require_once 'PHPUnit/Framework/Constraint/HeaderContains.php';
 require_once 'PHPUnit/Framework/Constraint/IsAnything.php';
 require_once 'PHPUnit/Framework/Constraint/IsEqual.php';
 require_once 'PHPUnit/Framework/Constraint/IsIdentical.php';

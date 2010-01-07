@@ -593,7 +593,29 @@ class PHPUnit_Util_Test
         );
 
         if (isset($annotations['class']['runTestsInSeparateProcesses']) ||
-            isset($annotations['method']['runInSeparateProcess'])) {
+            isset($annotations['method']['runInSeparateProcess']) ||
+            self::getProcessCgiSettings($className, $methodName) ) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    /**
+     * Returns the php binary setting for for a test
+     *
+     * @param  string $className
+     * @param  string $methodName
+     * @return boolean
+     * @since  Method available since Release 3.4.x
+     */
+    public static function getProcessCgiSettings($className, $methodName)
+    {
+        $annotations = self::parseTestMethodAnnotations(
+          $className, $methodName
+        );
+        if (isset($annotations['class']['runTestsInCgiProcesses']) ||
+            isset($annotations['method']['runInCgiProcess'])) {
             return TRUE;
         } else {
             return FALSE;

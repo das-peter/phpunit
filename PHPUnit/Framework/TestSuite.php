@@ -502,6 +502,9 @@ class PHPUnit_Framework_TestSuite implements PHPUnit_Framework_Test, PHPUnit_Fra
         $runTestInSeparateProcess = PHPUnit_Util_Test::getProcessIsolationSettings(
                                       $className, $name
                                     );
+        $runTestInCgiProcess     = PHPUnit_Util_Test::getProcessCgiSettings(
+                                      $className, $name
+                                    );
 
         $constructor = $theClass->getConstructor();
 
@@ -528,7 +531,8 @@ class PHPUnit_Framework_TestSuite implements PHPUnit_Framework_Test, PHPUnit_Fra
 
                         if ($runTestInSeparateProcess) {
                             $_test->setRunTestInSeparateProcess(TRUE);
-
+                            $_test->setRunTestInCgiProcess($runTestInCgiProcess);
+                            
                             if ($preserveGlobalState !== NULL) {
                                 $_test->setPreserveGlobalState($preserveGlobalState);
                             }
@@ -559,6 +563,7 @@ class PHPUnit_Framework_TestSuite implements PHPUnit_Framework_Test, PHPUnit_Fra
 
             if ($runTestInSeparateProcess) {
                 $test->setRunTestInSeparateProcess(TRUE);
+                $test->setRunTestInCgiProcess($runTestInCgiProcess);
 
                 if ($preserveGlobalState !== NULL) {
                     $test->setPreserveGlobalState($preserveGlobalState);

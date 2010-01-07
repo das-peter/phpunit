@@ -67,6 +67,13 @@ class PHPUnit_Util_PHP
      * @var    string $phpBinary
      */
     protected static $phpBinary = NULL;
+    
+    /**
+     * Path to the PHP Cgi interpreter that is to be used.
+     *
+     * @var    string $phpCgiBinary
+     */
+    protected static $phpCgiBinary = NULL;
 
     /**
      * Descriptor specification for proc_open().
@@ -105,11 +112,34 @@ class PHPUnit_Util_PHP
      *   4. The current PHP interpreter is assumed to be in the $PATH and
      *      to be invokable through "php".
      *
+     *   5. If the parameter $getCgiBinary is true, the cgi binary is returned
+     *   
+     * @param  boolean $getCgiBinary
      * @return string
      */
-    public static function getPhpBinary()
+    public static function getPhpBinary($getCgiBinary = FALSE)
     {
         if (self::$phpBinary === NULL) {
+            
+            $cgiBin = preg_replace('/([\\\/]php)(\.exe|)$/','$1-cgi$2','@php_bin@');
+            if (is_readable($cgiBin)) {
+                self::$phpCgiBinary = $cgiBin;
+            }else if ( isset($_SERVER['SCRIPT_FILENAME']) &&
+                         strpos($_SERVER['SCRIPT_FILENAME'], 'phpunit') !== FALSE) {
+                $file = file($_SERVER['SCRIPT_FILENAME']);
+                $binDir = dirname(trim(str_replace('#!','',$file[0])));
+                switch(true){
+                    case is_readable(($bin = $binDir. DIRECTORY_SEPARATOR .'php-cgi.exe')):
+                        self::$phpCgiBinary = $bin;
+                        break;
+                    case is_readable(($bin = $binDir. DIRECTORY_SEPARATOR .'php-cgi')):
+                        self::$phpCgiBinary = $bin;
+                        break;
+                }
+            }
+            self::$phpCgiBinary = escapeshellarg(self::$phpCgiBinary);
+            
+            
             if (is_readable('@php_bin@')) {
                 self::$phpBinary = '@php_bin@';
             }
@@ -127,6 +157,10 @@ class PHPUnit_Util_PHP
                 self::$phpBinary = escapeshellarg(self::$phpBinary);
             }
         }
+        
+        if($getCgiBinary){
+            return self::$phpCgiBinary;
+        }
 
         return self::$phpBinary;
     }
@@ -135,12 +169,13 @@ class PHPUnit_Util_PHP
      * Runs a single job (PHP code) using a separate PHP process.
      *
      * @param  string $job
+     * @param  boolean $runAsCgi
      * @return string
      */
-    public static function runJob($job)
+    public static function runJob($job, $runAsCgi = FALSE)
     {
         $process = proc_open(
-          self::getPhpBinary(), self::$descriptorSpec, $pipes
+          self::getPhpBinary($runAsCgi), self::$descriptorSpec, $pipes
         );
 
         if (is_resource($process)) {
@@ -149,14 +184,18 @@ class PHPUnit_Util_PHP
 
             $stdout = stream_get_contents($pipes[1]);
             fclose($pipes[1]);
-
+            
+            //Clean Header
+            $stdout = preg_replace('/^(.+[.\r\n]){0,}?phpunitIsolatedJobDone\r\n(Content\-type:.+\r\n|)\r\n/','',$stdout);
+            
             $stderr = stream_get_contents($pipes[2]);
             fclose($pipes[2]);
-
+            
             proc_close($process);
-
+            
             return array('stdout' => $stdout, 'stderr' => $stderr);
         }
     }
+    
 }
 ?>
