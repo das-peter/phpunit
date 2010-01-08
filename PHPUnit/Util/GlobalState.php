@@ -72,6 +72,11 @@ class PHPUnit_Util_GlobalState
     protected static $staticAttributes = array();
 
     /**
+     * @var NULL|string
+     */
+    protected static $testFile = NULL;
+
+    /**
      * @var array
      */
     protected static $superGlobalArrays = array(
@@ -336,6 +341,21 @@ class PHPUnit_Util_GlobalState
         }
 
         return $result;
+    }
+
+    public static function setTestFile($testFile){
+        if(is_file($testFile)){
+            self::$testFile = $testFile;
+            return true;
+        }
+        return false;
+    }
+
+    public static function getTestFile(){
+        if(!is_null(self::$testFile)){
+            return 'require_once \'' . self::$testFile . "';\n";
+        }
+        return '';
     }
 }
 ?>

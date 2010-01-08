@@ -577,7 +577,7 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
                 'dependencyInput'                => addcslashes(serialize($this->dependencyInput), "'"),
                 'dataName'                       => $this->dataName,
                 'collectCodeCoverageInformation' => $collectCodeCoverageInformation ? 'TRUE' : 'FALSE',
-                'included_files'                 => $this->preserveGlobalState ? PHPUnit_Util_GlobalState::getIncludedFilesAsString() : '',
+                'included_files'                 => $this->preserveGlobalState ? PHPUnit_Util_GlobalState::getIncludedFilesAsString() : PHPUnit_Util_GlobalState::getTestFile(),
                 'constants'                      => $this->preserveGlobalState ? PHPUnit_Util_GlobalState::getConstantsAsString() : '',
                 'globals'                        => $this->preserveGlobalState ? PHPUnit_Util_GlobalState::getGlobalsAsString() : '',
                 'include_path'                   => addslashes(get_include_path())

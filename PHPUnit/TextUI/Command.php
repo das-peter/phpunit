@@ -726,6 +726,7 @@ class PHPUnit_TextUI_Command
                 $this->arguments['testFile'] = realpath($this->arguments['test']);
                 $this->arguments['test']     = substr($this->arguments['test'], 0, strrpos($this->arguments['test'], '.'));
             }
+            PHPUnit_Util_GlobalState::setTestFile($this->arguments['testFile']);
         }
 
         if (isset($includePath)) {
