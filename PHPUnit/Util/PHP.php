@@ -185,8 +185,10 @@ class PHPUnit_Util_PHP
             $stdout = stream_get_contents($pipes[1]);
             fclose($pipes[1]);
             
-            //Clean Header
-            $stdout = preg_replace('/^(.+[.\r\n]){0,}?phpunitIsolatedJobDone\r\n(Content\-type:.+\r\n|)\r\n/','',$stdout);
+            if($runAsCgi){
+                //Clean Header
+                $stdout = preg_replace('/^(.+[.\r\n]){0,}?phpunitIsolatedJobDone\r\n(Content\-type:.+\r\n|)\r\n/','',$stdout);
+            }
             
             $stderr = stream_get_contents($pipes[2]);
             fclose($pipes[2]);
