@@ -333,6 +333,11 @@ class PHPUnit_Framework_Constraint_IsEqual extends PHPUnit_Framework_Constraint
             }
         }
 
+        if ($this->canonicalize) {
+            sort($a);
+            sort($b);
+        }
+
         $keysInB = array_flip(array_keys($b));
 
         foreach ($a as $key => $v) {
